@@ -1,0 +1,77 @@
+.overflow-line-1 {
+  width: 100%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.overflow-auto {
+  overflow: auto;
+}
+.overflow-hidden {
+  overflow: hidden;
+}
+.overflow-scroll {
+  overflow: scroll;
+}
+.overflow-x {
+  overflow-x: scroll;
+}
+.overflow-y {
+  overflow-y: scroll;
+}
+
+
+@textAlign: {
+  left: left;
+  center: center;
+  right: right
+}
+
+.fzLoop (@i) when (@i >= 10) {
+  .fontSize-@{i} {
+    font-size: @i + 0px;
+  }
+  .lineHeight-@{i} {
+    line-height: @i + 0px;
+  }
+  .fzLoop(@i - 2)
+}
+.fwLoop (@i) when (@i > 0) {
+  .fontWeight-@{i} {
+    font-weight: @i;
+  }
+  .fwLoop(@i - 100)
+}
+
+
+body {
+  each(@textAlign, {
+    .text-align-@{key} {
+      text-align: @value;
+    }
+    
+  })
+  .fzLoop(50);
+  .fwLoop(800);
+
+  ::-webkit-scrollbar {
+    background: #f0f0f086;
+    height: 5px;
+    width: 5px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgb(104, 104, 104);
+    border-radius: 40px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #f0f0f086;
+  }
+  box-sizing: border-box;
+  height: auto;
+}
+
+
+
+.cursor-pointer {
+  cursor: pointer;
+}

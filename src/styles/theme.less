@@ -1,0 +1,34 @@
+
+@colors: {
+  white: #fff;
+  blue: #1890ff;
+  red: #f5222d;
+  lime: #a0d911;
+  gold: #faad14;
+  yellow: #fadb14;
+  orange: #fa8c16;
+  green: #52c41a;
+  cyan: #13c2c2;
+  purple: #722ed1;
+  gray: #bfbfbf;
+  grey: #f2f5fa;
+  black: #141414
+}
+
+body {
+  each(@colors, {
+    .color-@{key} {
+      color:  @value;
+    }
+    .bg-@{key} {
+      background-color: @value
+    }
+
+    .color--@{key} {
+      color:  @value !important;
+    }
+    .bg--@{key} {
+      background-color: @value !important
+    }
+  });
+}
