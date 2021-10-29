@@ -15,7 +15,7 @@ jobs:
       uses: actions/checkout@main # If you're using actions/checkout@v2 you must set persist-credentials to false in most cases for the deployment to work correctly.
 
     - name: Build and Deploy
-      uses: JamesIves/github-pages-deploy-action@main
+      uses: JamesIves/github-pages-deploy-action@master
       env:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN_TEST }}
         BRANCH: gh-pages
