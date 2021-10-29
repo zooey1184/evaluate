@@ -6,37 +6,36 @@
           <span class="fontSize-14">({{date}})</span>
         </h3>
         <div class="float-right mb-8 flex items-center">
-          <a-input style="width: 200px" placeholder="请输入候选人姓名" />
-          <span>{{sum}}</span>
+          <a-input style="width: 200px" v-model:value='name' placeholder="请输入候选人姓名" />
           <a-button class="ml-8" type='primary' @click='handleCalc'>计算得分</a-button>
         </div>
       </div>
       <a-divider />
       <div>
-        <Score title="技能匹配" class="mb-32" v-model:score="skill_score">
-          <template v-slot:title>
-            <div class="fontSize-16">
-              技能匹配
-              <ExperimentOutlined @click="handleSkills" />
+        <div v-for='item in question' class="mb-32" :key='item.key'>
+          <Score v-model:score="item.score">
+            <template v-slot:title>
+              <div class="fontSize-16">
+                {{item.title}}
+                <ExperimentOutlined @click="handleSkills" v-if='item.key === "skill"' />
+              </div>
+            </template>
+            <div v-if='item.desc' class="color-gray">
+              {{item.desc}}
             </div>
-            
-          </template>
-        </Score>
-        <!-- <Score title='项目匹配'></Score> -->
-        <!-- <Score title='文化匹配'></Score> -->
-        <Score title='综合匹配' v-model:score="com_score"></Score>
+          </Score>
+        </div>
       </div>
 
-      <a-drawer :title="title" :width='800' placement="right" v-model:visible="visible">
+      <a-drawer :title="title" width='60%' placement="right" v-model:visible="visible">
         <TestPane ref='skill'></TestPane>
       </a-drawer>
 
       <a-drawer height='100%' placement="top" v-model:visible="visibleAnaly">
         <div>
-          <AnalyPane></AnalyPane>
+          <AnalyPane :info='question' :score='sum' :visible='visibleAnaly' :name='name'></AnalyPane>
         </div>
-        <AnalySkillPane ></AnalySkillPane>
-        
+        <AnalySkillPane :info='skillInfo' :visible='visibleAnaly'></AnalySkillPane>
       </a-drawer>
     </Wrap>
   </div>
@@ -68,7 +67,35 @@ export default {
   },
   computed: {
     sum() {
-      return (this.skill_score + this.com_score)/2
+      const question = this.question
+      let t = 0
+      question.forEach(item => {
+        t += item.score
+      })
+      return t/question.length
+    }
+  },
+  watch: {
+    visible(n) {
+      if (!n) {
+        const skill = this.$refs.skill
+        const info = skill.getInfo()
+        let score = 0
+        info?.forEach((item => {
+          score += item.score
+        }))
+        const s = this.question.find(item => item.key === 'skill')
+        if (s && info?.length) {
+          s.score = parseInt(score/info.length)
+          this.skillInfo = info
+          // const skillMap = this.$storage.get('skill') || {}
+          // skillMap[this.name || 'a'] = info
+          // this.$storage.set('skill', skillMap)
+        }
+      }
+    },
+    name(n) {
+      console.log(n);
     }
   },
   methods: {
@@ -76,35 +103,58 @@ export default {
       this.visible = true;
     },
     handleCalc() {
-      const params = [
-        {
-          title: '技能匹配',
-          score: this.skill_score
-        },
-        {
-          title: '综合匹配',
-          score: this.com_score
-        }
-      ]
-
       this.visibleAnaly = true
+      // console.log(this.question);
+      // const infoMap = this.$storage.get('info') || {}
+      // infoMap[this.name || 'a'] = this.question
+      // this.$storage.set('skill', infoMap)
     }
   },
   setup() {
     const date = dayjs().format("YYYY-MM-DD");
-    const skill_score = ref(10);
-    const com_score = ref(10)
     const visible = ref(false);
     const title = ref("技能匹配");
 
     const visibleAnaly = ref(false)
+    const skillInfo = ref([])
+
+    const question = ref([
+      {
+        title: '技能匹配',
+        desc: '考察候选人【专业技能】是否符合要求，',
+        key: 'skill',
+        score: 0,
+      },
+      {
+        title: '岗位匹配',
+        desc: '考察候选人的岗位匹配度，是否符合岗位要求',
+        key: 'post',
+        score: 0,
+      },
+      {
+        title: '经历匹配',
+        desc: '考察候选人在过往经历是否虚假，是否存在有专业对口的经历，例如有过对应项目的经验等',
+        key: 'exp',
+        score: 0,
+      },
+      {
+        title: '综合匹配',
+        desc: '考察候选人的价值观是否符合企业文化，以及未来的职业规划是否具有稳定性',
+        key: 'comprehensive',
+        score: 0,
+      },
+    ])
+
+    const name = ref('')
+
     return {
       date: date,
-      skill_score,
-      com_score,
+      question,
       visible,
       title,
-      visibleAnaly
+      visibleAnaly,
+      skillInfo,
+      name
     };
   },
 };
