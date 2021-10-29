@@ -146,7 +146,7 @@ export default {
     ])
 
     const name = ref('')
-
+    console.log('update: 2021.10.29');
     return {
       date: date,
       question,
