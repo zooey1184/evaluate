@@ -11,7 +11,7 @@
   </div>
 </template>
 
-<script lang="ts">
+<script>
 import {Slider} from 'ant-design-vue'
 
 export default {
@@ -28,7 +28,7 @@ export default {
   },
   emits: ['update:score'],
   methods: {
-    handleChangeCount(e:number) {
+    handleChangeCount(e) {
       this.$emit('update:score', e)
     }
   },
